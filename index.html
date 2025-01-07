@@ -2,14 +2,26 @@
 <html>
 <head>
     <title>AR Experience</title>
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@2.4.1/aframe/build/aframe-ar.min.js"></script>
 </head>
-<body>
-    <a-scene>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+        <!-- Активация модели -->
         <a-assets>
             <a-asset-item id="model" src="assets/D_Rex.glb"></a-asset-item>
         </a-assets>
-        <a-entity gltf-model="#model" position="0 1.6 -3"></a-entity>
+
+        <!-- Модель, привязанная к маркеру -->
+        <a-entity
+            gltf-model="#model"
+            position="0 0 0"
+            scale="0.5 0.5 0.5"
+            rotation="0 0 0"
+            arjs-anchor="type: pattern; patternUrl: assets/pattern-marker.patt">
+        </a-entity>
     </a-scene>
 </body>
 </html>
