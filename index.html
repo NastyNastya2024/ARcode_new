@@ -6,67 +6,14 @@
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@ar-js-org/ar.js@3.4.6/aframe/build/aframe-ar.min.js"></script>
     <style>
-        /* Стили для кнопок управления */
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .button {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
-            text-align: center;
-            line-height: 50px;
-            margin: 10px;
-            cursor: pointer;
-        }
-
-        .button:active {
-            background: rgba(255, 255, 255, 0.7);
-            color: black;
-        }
-
-        .scroll {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
+        body {
+            margin: 0;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
-
-        .scroll input[type="range"] {
-            width: 100%;
-            background: transparent;
-            -webkit-appearance: none;
-        }
-
-        .scroll input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: white;
         }
     </style>
 </head>
 
-<body style="margin: 0; overflow: hidden;">
+<body>
     <a-scene embedded arjs="sourceType: webcam;">
         <a-assets>
             <a-asset-item id="model" src="assets/D_Rex.glb"></a-asset-item>
@@ -76,53 +23,49 @@
         <a-entity id="modelEntity" gltf-model="#model" position="0 0 -2" scale="0.5 0.5 0.5"></a-entity>
     </a-scene>
 
-    <!-- Панель управления -->
-    <div class="controls">
-        <button class="button" id="moveUp">↑</button>
-        <button class="button" id="moveLeft">←</button>
-        <button class="button" id="moveRight">→</button>
-        <button class="button" id="moveDown">↓</button>
-    </div>
-
-    <!-- Скролл для вращения -->
-    <div class="scroll">
-        <input id="rotationScroll" type="range" min="0" max="360" step="1" value="0">
-    </div>
-
     <script>
         const modelEntity = document.querySelector('#modelEntity');
-        const moveSpeed = 0.1; // Скорость перемещения
-        const scroll = document.querySelector('#rotationScroll');
 
-        // Начальная позиция и поворот
-        let position = modelEntity.getAttribute('position');
-        let rotation = modelEntity.getAttribute('rotation');
+        let isDragging = false; // Флаг для отслеживания состояния касания
+        let startTouch = { x: 0, y: 0 }; // Начальная точка касания
+        let currentRotation = { x: 0, y: 0 }; // Текущий поворот объекта
 
-        // Управление движением
-        document.querySelector('#moveUp').addEventListener('click', () => {
-            position.y += moveSpeed;
-            modelEntity.setAttribute('position', position);
+        // Обработчик начала касания
+        modelEntity.addEventListener('touchstart', (event) => {
+            isDragging = true;
+
+            // Получаем первую точку касания
+            const touch = event.touches[0];
+            startTouch.x = touch.clientX;
+            startTouch.y = touch.clientY;
+
+            // Сохраняем текущую ориентацию объекта
+            const rotation = modelEntity.getAttribute('rotation');
+            currentRotation.x = rotation.x;
+            currentRotation.y = rotation.y;
         });
 
-        document.querySelector('#moveDown').addEventListener('click', () => {
-            position.y -= moveSpeed;
-            modelEntity.setAttribute('position', position);
+        // Обработчик перемещения касания
+        modelEntity.addEventListener('touchmove', (event) => {
+            if (!isDragging) return;
+
+            const touch = event.touches[0];
+            const deltaX = touch.clientX - startTouch.x;
+            const deltaY = touch.clientY - startTouch.y;
+
+            // Обновляем поворот объекта
+            const newRotation = {
+                x: currentRotation.x - deltaY * 0.1, // Вращение вокруг оси X
+                y: currentRotation.y + deltaX * 0.1, // Вращение вокруг оси Y
+                z: 0
+            };
+
+            modelEntity.setAttribute('rotation', newRotation);
         });
 
-        document.querySelector('#moveLeft').addEventListener('click', () => {
-            position.x -= moveSpeed;
-            modelEntity.setAttribute('position', position);
-        });
-
-        document.querySelector('#moveRight').addEventListener('click', () => {
-            position.x += moveSpeed;
-            modelEntity.setAttribute('position', position);
-        });
-
-        // Управление вращением
-        scroll.addEventListener('input', (event) => {
-            rotation.y = parseFloat(event.target.value); // Вращение вокруг оси Y
-            modelEntity.setAttribute('rotation', rotation);
+        // Обработчик окончания касания
+        modelEntity.addEventListener('touchend', () => {
+            isDragging = false;
         });
     </script>
 </body>
