@@ -13,8 +13,71 @@
             <a-asset-item id="model" src="assets/D_Rex.glb"></a-asset-item>
         </a-assets>
 
-        <a-entity gltf-model="#model" position="0 0 -2" scale="0.5 0.5 0.5"></a-entity>
+        <a-entity id="modelEntity" gltf-model="#model" position="0 0 -2" scale="0.5 0.5 0.5"></a-entity>
     </a-scene>
+
+    <div style="position: fixed; top: 10px; left: 10px; background: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 5px;">
+        <h3>Controls</h3>
+        <label for="posX">Position X:</label>
+        <input id="posX" type="range" min="-5" max="5" step="0.1" value="0">
+        <br>
+        <label for="posY">Position Y:</label>
+        <input id="posY" type="range" min="-5" max="5" step="0.1" value="0">
+        <br>
+        <label for="posZ">Position Z:</label>
+        <input id="posZ" type="range" min="-5" max="5" step="0.1" value="-2">
+        <br>
+        <label for="rotX">Rotation X:</label>
+        <input id="rotX" type="range" min="0" max="360" step="1" value="0">
+        <br>
+        <label for="rotY">Rotation Y:</label>
+        <input id="rotY" type="range" min="0" max="360" step="1" value="0">
+        <br>
+        <label for="rotZ">Rotation Z:</label>
+        <input id="rotZ" type="range" min="0" max="360" step="1" value="0">
+    </div>
+
+    <script>
+        const modelEntity = document.querySelector('#modelEntity');
+
+        // Position controls
+        document.querySelector('#posX').addEventListener('input', (event) => {
+            const pos = modelEntity.getAttribute('position');
+            pos.x = parseFloat(event.target.value);
+            modelEntity.setAttribute('position', pos);
+        });
+
+        document.querySelector('#posY').addEventListener('input', (event) => {
+            const pos = modelEntity.getAttribute('position');
+            pos.y = parseFloat(event.target.value);
+            modelEntity.setAttribute('position', pos);
+        });
+
+        document.querySelector('#posZ').addEventListener('input', (event) => {
+            const pos = modelEntity.getAttribute('position');
+            pos.z = parseFloat(event.target.value);
+            modelEntity.setAttribute('position', pos);
+        });
+
+        // Rotation controls
+        document.querySelector('#rotX').addEventListener('input', (event) => {
+            const rot = modelEntity.getAttribute('rotation');
+            rot.x = parseFloat(event.target.value);
+            modelEntity.setAttribute('rotation', rot);
+        });
+
+        document.querySelector('#rotY').addEventListener('input', (event) => {
+            const rot = modelEntity.getAttribute('rotation');
+            rot.y = parseFloat(event.target.value);
+            modelEntity.setAttribute('rotation', rot);
+        });
+
+        document.querySelector('#rotZ').addEventListener('input', (event) => {
+            const rot = modelEntity.getAttribute('rotation');
+            rot.z = parseFloat(event.target.value);
+            modelEntity.setAttribute('rotation', rot);
+        });
+    </script>
 </body>
 
 </html>
