@@ -32,17 +32,19 @@
 
         // Обработчик начала касания
         modelEntity.addEventListener('touchstart', (event) => {
-            isDragging = true;
+            if (event.touches.length == 1) { // Обрабатываем только одиночное касание
+                isDragging = true;
 
-            // Получаем первую точку касания
-            const touch = event.touches[0];
-            startTouch.x = touch.clientX;
-            startTouch.y = touch.clientY;
+                // Получаем первую точку касания
+                const touch = event.touches[0];
+                startTouch.x = touch.clientX;
+                startTouch.y = touch.clientY;
 
-            // Сохраняем текущую ориентацию объекта
-            const rotation = modelEntity.getAttribute('rotation');
-            currentRotation.x = rotation.x;
-            currentRotation.y = rotation.y;
+                // Сохраняем текущую ориентацию объекта
+                const rotation = modelEntity.getAttribute('rotation');
+                currentRotation.x = rotation.x;
+                currentRotation.y = rotation.y;
+            }
         });
 
         // Обработчик перемещения касания
@@ -50,6 +52,8 @@
             if (!isDragging) return;
 
             const touch = event.touches[0];
+
+            // Находим изменения по оси X и Y
             const deltaX = touch.clientX - startTouch.x;
             const deltaY = touch.clientY - startTouch.y;
 
@@ -60,6 +64,7 @@
                 z: 0
             };
 
+            // Применяем новый поворот к объекту
             modelEntity.setAttribute('rotation', newRotation);
         });
 
