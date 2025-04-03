@@ -26,52 +26,45 @@
     <script>
         const modelEntity = document.querySelector('#modelEntity');
 
-        let isDragging = false; // Флаг для отслеживания состояния касания
-        let startTouch = { x: 0, y: 0 }; // Начальная точка касания
-        let currentRotation = { x: 0, y: 0 }; // Текущий поворот объекта
+        let isDragging = false;
+        let startTouch = { x: 0, y: 0 };
+        let currentRotation = { x: 0, y: 0 };
 
-        // Обработчик начала касания
         modelEntity.addEventListener('touchstart', (event) => {
-            if (event.touches.length == 1) { // Обрабатываем только одиночное касание
-                isDragging = true;
-
-                // Получаем первую точку касания
-                const touch = event.touches[0];
-                startTouch.x = touch.clientX;
-                startTouch.y = touch.clientY;
-
-                // Сохраняем текущую ориентацию объекта
-                const rotation = modelEntity.getAttribute('rotation');
-                currentRotation.x = rotation.x;
-                currentRotation.y = rotation.y;
+            if (event.touches.length > 1) {
+                isDragging = false;
+                return;
             }
+            isDragging = true;
+
+            const touch = event.touches[0];
+            startTouch.x = touch.clientX;
+            startTouch.y = touch.clientY;
+
+            const rotation = modelEntity.getAttribute('rotation') || { x: 0, y: 0, z: 0 };
+            currentRotation.x = rotation.x;
+            currentRotation.y = rotation.y;
         });
 
-        // Обработчик перемещения касания
         modelEntity.addEventListener('touchmove', (event) => {
             if (!isDragging) return;
 
             const touch = event.touches[0];
-
-            // Находим изменения по оси X и Y
             const deltaX = touch.clientX - startTouch.x;
             const deltaY = touch.clientY - startTouch.y;
 
-            // Обновляем поворот объекта
             const newRotation = {
-                x: currentRotation.x - deltaY * 0.1, // Вращение вокруг оси X
-                y: currentRotation.y + deltaX * 0.1, // Вращение вокруг оси Y
+                x: currentRotation.x - deltaY * 0.1,
+                y: currentRotation.y + deltaX * 0.1,
                 z: 0
             };
 
-            // Применяем новый поворот к объекту
-            modelEntity.setAttribute('rotation', newRotation);
+            modelEntity.setAttribute('rotation', { x: newRotation.x, y: newRotation.y, z: newRotation.z });
         });
 
-        // Обработчик окончания касания
-        modelEntity.addEventListener('touchend', () => {
-            isDragging = false;
-        });
+        modelEntity.addEventListener('touchend', () => { isDragging = false; });
+        modelEntity.addEventListener('touchcancel', () => { isDragging = false; });
+
     </script>
 </body>
 
